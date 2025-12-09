@@ -1,74 +1,22 @@
-import { useState, useRef } from "react";
-import { MessageCircle, X, Upload, Send, FileText, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { MessageCircle, X, Send, Loader2, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 
 const API_BASE = "https://46615aacc738.ngrok-free.app";
 
+interface AnalysisResult {
+  fitting_score: number;
+  reasons: string[];
+}
+
 export const JobAnalyzerBot = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [mode, setMode] = useState<"idle" | "text" | "file">("idle");
   const [jobText, setJobText] = useState("");
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [result, setResult] = useState<string | null>(null);
+  const [result, setResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setSelectedFile(file);
-      setMode("file");
-      setError(null);
-    }
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files?.[0];
-    if (file) {
-      setSelectedFile(file);
-      setMode("file");
-      setError(null);
-    }
-  };
-
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-  };
-
-  const analyzeWithFile = async () => {
-    if (!selectedFile) return;
-    
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      const formData = new FormData();
-      formData.append("document", selectedFile);
-      
-      const response = await fetch(`${API_BASE}/analyze-application`, {
-        method: "POST",
-        headers: {
-          "ngrok-skip-browser-warning": "true",
-        },
-        body: formData,
-      });
-      
-      if (!response.ok) {
-        throw new Error("Failed to analyze document");
-      }
-      
-      const data = await response.json();
-      setResult(data.reason);
-    } catch (err) {
-      setError("Failed to analyze the document. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const analyzeWithText = async () => {
     if (!jobText.trim()) return;
@@ -90,8 +38,8 @@ export const JobAnalyzerBot = () => {
         throw new Error("Failed to analyze text");
       }
       
-      const text = await response.text();
-      setResult(text);
+      const data: AnalysisResult = await response.json();
+      setResult(data);
     } catch (err) {
       setError("Failed to analyze. Please try again.");
     } finally {
@@ -100,11 +48,15 @@ export const JobAnalyzerBot = () => {
   };
 
   const reset = () => {
-    setMode("idle");
     setJobText("");
-    setSelectedFile(null);
     setResult(null);
     setError(null);
+  };
+
+  const getScoreColor = (score: number) => {
+    if (score >= 8) return "text-green-500";
+    if (score >= 5) return "text-yellow-500";
+    return "text-red-500";
   };
 
   return (
@@ -136,7 +88,7 @@ export const JobAnalyzerBot = () => {
             Is Enzo a good fit? 🎯
           </h3>
           <p className="text-sm text-muted-foreground mt-1">
-            Drop a job description and find out!
+            Paste a job description and find out!
           </p>
         </div>
 
@@ -144,9 +96,33 @@ export const JobAnalyzerBot = () => {
         <div className="p-4 max-h-[380px] overflow-y-auto">
           {result ? (
             <div className="space-y-4">
-              <div className="bg-secondary/50 rounded-xl p-4 text-sm text-foreground whitespace-pre-wrap">
-                {result}
+              {/* Score Display */}
+              <div className="bg-secondary/50 rounded-xl p-4 text-center">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <Star className={cn("w-6 h-6", getScoreColor(result.fitting_score))} />
+                  <span className={cn("text-3xl font-bold", getScoreColor(result.fitting_score))}>
+                    {result.fitting_score}/10
+                  </span>
+                </div>
+                <p className="text-sm text-muted-foreground">Fitting Score</p>
               </div>
+
+              {/* Reasons */}
+              <div className="space-y-2">
+                <h4 className="text-sm font-semibold text-foreground">Why Enzo fits:</h4>
+                <ul className="space-y-2">
+                  {result.reasons.map((reason, index) => (
+                    <li
+                      key={index}
+                      className="bg-secondary/30 rounded-lg p-3 text-sm text-foreground flex gap-2"
+                    >
+                      <span className="text-primary font-bold">•</span>
+                      {reason}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
               <Button onClick={reset} variant="outline" className="w-full">
                 Analyze another job
               </Button>
@@ -164,67 +140,13 @@ export const JobAnalyzerBot = () => {
                 </div>
               )}
 
-              {/* Drop Zone */}
-              <div
-                onDrop={handleDrop}
-                onDragOver={handleDragOver}
-                onClick={() => fileInputRef.current?.click()}
-                className={cn(
-                  "border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors",
-                  "hover:border-primary hover:bg-primary/5",
-                  selectedFile ? "border-primary bg-primary/5" : "border-border"
-                )}
-              >
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  onChange={handleFileSelect}
-                  accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg"
-                  className="hidden"
-                />
-                {selectedFile ? (
-                  <div className="flex items-center justify-center gap-2 text-primary">
-                    <FileText className="w-5 h-5" />
-                    <span className="text-sm font-medium truncate max-w-[200px]">
-                      {selectedFile.name}
-                    </span>
-                  </div>
-                ) : (
-                  <>
-                    <Upload className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
-                    <p className="text-sm text-muted-foreground">
-                      Drop a job description file
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      PDF, DOC, TXT, or image
-                    </p>
-                  </>
-                )}
-              </div>
-
-              {selectedFile && (
-                <Button onClick={analyzeWithFile} className="w-full">
-                  Analyze Document
-                </Button>
-              )}
-
-              <div className="flex items-center gap-3">
-                <div className="flex-1 h-px bg-border" />
-                <span className="text-xs text-muted-foreground">or paste text</span>
-                <div className="flex-1 h-px bg-border" />
-              </div>
-
               {/* Text Input */}
               <div className="space-y-2">
                 <Textarea
                   placeholder="Paste the job description here..."
                   value={jobText}
-                  onChange={(e) => {
-                    setJobText(e.target.value);
-                    setMode("text");
-                    setSelectedFile(null);
-                  }}
-                  className="min-h-[100px] resize-none bg-secondary/30"
+                  onChange={(e) => setJobText(e.target.value)}
+                  className="min-h-[150px] resize-none bg-secondary/30"
                 />
                 <Button
                   onClick={analyzeWithText}
@@ -232,7 +154,7 @@ export const JobAnalyzerBot = () => {
                   className="w-full"
                 >
                   <Send className="w-4 h-4 mr-2" />
-                  Analyze Text
+                  Analyze
                 </Button>
               </div>
             </div>
