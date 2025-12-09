@@ -61,39 +61,56 @@ export const JobAnalyzerBot = () => {
 
   return (
     <>
-      {/* Floating Button */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className={cn(
-          "fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 shadow-lg",
-          "bg-primary text-primary-foreground hover:scale-110",
-          isOpen && "rotate-90"
-        )}
-        aria-label="Job Analyzer"
-      >
-        {isOpen ? <X className="w-6 h-6" /> : <MessageCircle className="w-6 h-6" />}
-      </button>
+      {/* Floating Button with Teaser */}
+      <div className="fixed bottom-6 right-6 z-50 flex items-end gap-3">
+        {/* Teaser bubble */}
+        <div
+          className={cn(
+            "bg-card border border-border rounded-2xl rounded-br-sm px-4 py-3 shadow-lg transition-all duration-300 max-w-[200px]",
+            isOpen ? "opacity-0 scale-95 pointer-events-none" : "opacity-100 scale-100 animate-fade-in"
+          )}
+        >
+          <p className="text-sm font-medium text-foreground">
+            Hiring? Check if I'm a fit! 🎯
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            Paste a job description
+          </p>
+        </div>
+
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className={cn(
+            "w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 shadow-lg",
+            "bg-primary text-primary-foreground hover:scale-110",
+            isOpen && "rotate-90"
+          )}
+          aria-label="Job Analyzer"
+        >
+          {isOpen ? <X className="w-6 h-6" /> : <MessageCircle className="w-6 h-6" />}
+        </button>
+      </div>
 
       {/* Chat Panel */}
       <div
         className={cn(
-          "fixed bottom-24 right-6 z-50 w-[360px] max-h-[500px] rounded-2xl overflow-hidden transition-all duration-300 shadow-2xl",
+          "fixed bottom-24 right-6 z-50 w-[420px] max-h-[600px] rounded-2xl overflow-hidden transition-all duration-300 shadow-2xl",
           "bg-card border border-border",
           isOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"
         )}
       >
         {/* Header */}
-        <div className="bg-primary/10 border-b border-border p-4">
-          <h3 className="font-display text-lg font-semibold text-foreground">
+        <div className="bg-primary/10 border-b border-border p-5">
+          <h3 className="font-display text-xl font-semibold text-foreground">
             Is Enzo a good fit? 🎯
           </h3>
           <p className="text-sm text-muted-foreground mt-1">
-            Paste a job description and find out!
+            Paste a job description and find out instantly!
           </p>
         </div>
 
         {/* Content */}
-        <div className="p-4 max-h-[380px] overflow-y-auto">
+        <div className="p-5 max-h-[480px] overflow-y-auto">
           {result ? (
             <div className="space-y-4">
               {/* Score Display */}
@@ -146,7 +163,7 @@ export const JobAnalyzerBot = () => {
                   placeholder="Paste the job description here..."
                   value={jobText}
                   onChange={(e) => setJobText(e.target.value)}
-                  className="min-h-[150px] resize-none bg-secondary/30"
+                  className="min-h-[200px] resize-none bg-secondary/30"
                 />
                 <Button
                   onClick={analyzeWithText}
