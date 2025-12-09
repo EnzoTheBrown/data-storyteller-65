@@ -25,7 +25,7 @@ export const JobAnalyzerBot = () => {
     setError(null);
     
     try {
-      const response = await fetch(API_BASE, {
+      const response = await fetch(`${API_BASE}/analyze-application-text`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
