@@ -2,6 +2,7 @@ import HeroSection from "@/components/portfolio/HeroSection";
 import ExperienceSection from "@/components/portfolio/ExperienceSection";
 import EducationSection from "@/components/portfolio/EducationSection";
 import Footer from "@/components/portfolio/Footer";
+import { JobAnalyzerBot } from "@/components/portfolio/JobAnalyzerBot";
 
 const Index = () => {
   return (
@@ -10,6 +11,7 @@ const Index = () => {
       <ExperienceSection />
       <EducationSection />
       <Footer />
+      <JobAnalyzerBot />
     </main>
   );
 };
