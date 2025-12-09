@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 
-const API_BASE = "https://46615aacc738.ngrok-free.app";
+const API_BASE = "https://lols8flga6.execute-api.eu-west-1.amazonaws.com/analyze-application-text";
 
 interface AnalysisResult {
   fitting_score: number;
@@ -29,7 +29,6 @@ export const JobAnalyzerBot = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "ngrok-skip-browser-warning": "true",
         },
         body: JSON.stringify({ job_description: jobText }),
       });
