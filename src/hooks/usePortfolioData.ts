@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import type { Experience, Education } from "@/types/portfolio";
 import { experiencesData, educationData } from "@/data/portfolioData";
 
-const API_BASE = "https://ee82f53f58e6.ngrok-free.app";
+const API_BASE = "https://46615aacc738.ngrok-free.app";
 
 const fetchWithNgrok = async (url: string) => {
   const response = await fetch(url, {

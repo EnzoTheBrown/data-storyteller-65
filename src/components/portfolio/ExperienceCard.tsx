@@ -57,7 +57,7 @@ const ExperienceCard = ({ experience, index }: ExperienceCardProps) => {
           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
             <div className="flex-1">
               <div className="flex flex-wrap items-center gap-3 mb-2">
-                <h3 className="font-display text-xl font-semibold text-foreground">
+                <h3 className="font-display text-2xl md:text-3xl font-semibold text-foreground">
                   {experience.title}
                 </h3>
                 <Badge className={cn("text-xs", getLevelBadgeColor(experience.level))}>
