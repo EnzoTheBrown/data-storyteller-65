@@ -2,14 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import type { Experience, Education } from "@/types/portfolio";
 import { experiencesData, educationData } from "@/data/portfolioData";
 
-const API_BASE = "https://46615aacc738.ngrok-free.app";
+const S3_BASE = "https://s3.eu-west-1.amazonaws.com/enzolebrun.dev";
 
-const fetchWithNgrok = async (url: string) => {
-  const response = await fetch(url, {
-    headers: {
-      "ngrok-skip-browser-warning": "true",
-    },
-  });
+const fetchData = async (url: string) => {
+  const response = await fetch(url);
   if (!response.ok) throw new Error("Network response was not ok");
   return response.json();
 };
@@ -19,7 +15,7 @@ export const useExperiences = () => {
     queryKey: ["experiences"],
     queryFn: async () => {
       try {
-        return await fetchWithNgrok(`${API_BASE}/experiences`);
+        return await fetchData(`${S3_BASE}/experiences.json`);
       } catch {
         // Fallback to local data if API is unavailable
         return experiencesData;
@@ -36,7 +32,7 @@ export const useEducation = () => {
     queryKey: ["education"],
     queryFn: async () => {
       try {
-        return await fetchWithNgrok(`${API_BASE}/education`);
+        return await fetchData(`${S3_BASE}/education.json`);
       } catch {
         // Fallback to local data if API is unavailable
         return educationData;
@@ -48,4 +44,4 @@ export const useEducation = () => {
   });
 };
 
-export const getProfilePictureUrl = () => `${API_BASE}/me.png`;
+export const getProfilePictureUrl = () => `${S3_BASE}/me.png`;
