@@ -38,12 +38,17 @@ const HeroSection = () => {
               Lead Backend & GenAI
             </p>
             <h1 
-              className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 animate-fade-in"
+              className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-2 animate-fade-in"
               style={{ animationDelay: "0.3s" }}
             >
-              Data Scientist &<br />
-              <span className="text-gradient">AI Engineer</span>
+              Enzo Lebrun
             </h1>
+            <p 
+              className="font-display text-2xl md:text-3xl lg:text-4xl font-semibold text-foreground/80 mb-6 animate-fade-in"
+              style={{ animationDelay: "0.35s" }}
+            >
+              Data Scientist & <span className="text-gradient">AI Engineer</span>
+            </p>
             <p 
               className="text-muted-foreground text-lg md:text-xl leading-relaxed mb-8 animate-fade-in"
               style={{ animationDelay: "0.4s" }}
@@ -54,7 +59,7 @@ const HeroSection = () => {
             </p>
             
             <div 
-              className="flex flex-wrap justify-center lg:justify-start gap-6 text-muted-foreground animate-fade-in"
+              className="flex flex-wrap justify-center lg:justify-start gap-6 text-muted-foreground mb-6 animate-fade-in"
               style={{ animationDelay: "0.5s" }}
             >
               <div className="flex items-center gap-2">
@@ -66,6 +71,13 @@ const HeroSection = () => {
                 <span>iBanFirst & Tantar</span>
               </div>
             </div>
+            
+            <blockquote 
+              className="text-muted-foreground/70 italic text-sm md:text-base border-l-2 border-primary/30 pl-4 animate-fade-in"
+              style={{ animationDelay: "0.6s" }}
+            >
+              "Build systems you want to debug at 3am." – Charity Majors
+            </blockquote>
           </div>
         </div>
       </div>
