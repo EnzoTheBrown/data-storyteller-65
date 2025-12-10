@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { MessageCircle, X, Send, Loader2, Star } from "lucide-react";
+import { MessageCircle, X, Send, Loader2, Star, Copy, Check } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
@@ -17,6 +18,36 @@ export const JobAnalyzerBot = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  const copyToShare = async () => {
+    if (!result) return;
+    
+    const shareText = `🎯 Enzo Lebrun - Job Fit Analysis
+
+⭐ Fitting Score: ${result.fitting_score}/10
+
+Why Enzo fits:
+${result.reasons.map(r => `• ${r}`).join('\n')}
+
+Check out his portfolio: https://enzolebrun.dev`;
+
+    try {
+      await navigator.clipboard.writeText(shareText);
+      setCopied(true);
+      toast({
+        title: "Copied to clipboard!",
+        description: "Share it on Teams, LinkedIn, X, or anywhere!",
+      });
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      toast({
+        title: "Failed to copy",
+        description: "Please try again",
+        variant: "destructive",
+      });
+    }
+  };
 
   const analyzeWithText = async () => {
     if (!jobText.trim()) return;
@@ -137,6 +168,26 @@ export const JobAnalyzerBot = () => {
                     </li>
                   ))}
                 </ul>
+              </div>
+
+              {/* Share Section */}
+              <div className="bg-primary/10 rounded-xl p-4 space-y-3">
+                <p className="text-sm text-foreground font-medium text-center">
+                  Share this result! 🚀
+                </p>
+                <Button onClick={copyToShare} variant="secondary" className="w-full">
+                  {copied ? (
+                    <>
+                      <Check className="w-4 h-4 mr-2" />
+                      Copied!
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-4 h-4 mr-2" />
+                      Copy to share on Teams, LinkedIn, X...
+                    </>
+                  )}
+                </Button>
               </div>
 
               <Button onClick={reset} variant="outline" className="w-full">
