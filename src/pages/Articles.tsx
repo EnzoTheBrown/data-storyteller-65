@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ChevronDown, FileText, Loader2, ArrowRight } from "lucide-react";
-import MarkdownRenderer from "./MarkdownRenderer";
+import { ChevronDown, FileText, Loader2, ArrowLeft } from "lucide-react";
+import MarkdownRenderer from "@/components/portfolio/MarkdownRenderer";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { GITHUB_API_BASE, GITHUB_RAW_BASE } from "@/lib/github";
+import LanguageSwitcher from "@/components/portfolio/LanguageSwitcher";
 
 interface Article {
   name: string;
@@ -25,7 +26,6 @@ const useArticleList = () => {
         if (!response.ok) throw new Error("Failed to fetch article list");
         const data = await response.json();
         
-        // Filter files for current language
         const langSuffix = `.${language}.md`;
         const mdFiles = data
           .filter((file: any) => file.name.endsWith(langSuffix))
@@ -130,29 +130,33 @@ const ArticleCard = ({ article }: { article: Article }) => {
   );
 };
 
-const ArticleSection = () => {
+const Articles = () => {
   const { articles, loading, error } = useArticleList();
   const { t } = useLanguage();
 
   return (
-    <section id="articles" className="py-16 md:py-24 bg-secondary/10">
-      <div className="container px-6 max-w-5xl mx-auto">
-        <div className="flex items-center justify-between mb-10">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-primary/10">
-              <FileText className="w-6 h-6 text-primary" />
-            </div>
-            <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground">
-              {t({ en: "Articles", fr: "Articles" })}
-            </h2>
-          </div>
+    <div className="min-h-screen bg-background">
+      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border/50">
+        <div className="container px-6 max-w-5xl mx-auto py-4 flex items-center justify-between">
           <Link 
-            to="/articles" 
-            className="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors text-sm font-medium"
+            to="/" 
+            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
           >
-            {t({ en: "View all", fr: "Voir tout" })}
-            <ArrowRight className="w-4 h-4" />
+            <ArrowLeft className="w-4 h-4" />
+            <span>{t({ en: "Back to Home", fr: "Retour à l'accueil" })}</span>
           </Link>
+          <LanguageSwitcher />
+        </div>
+      </header>
+
+      <main className="container px-6 max-w-5xl mx-auto py-16">
+        <div className="flex items-center gap-3 mb-10">
+          <div className="p-2 rounded-lg bg-primary/10">
+            <FileText className="w-6 h-6 text-primary" />
+          </div>
+          <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground">
+            {t({ en: "Articles", fr: "Articles" })}
+          </h1>
         </div>
 
         {loading && (
@@ -170,9 +174,9 @@ const ArticleSection = () => {
             <ArticleCard key={article.slug} article={article} />
           ))}
         </div>
-      </div>
-    </section>
+      </main>
+    </div>
   );
 };
 
-export default ArticleSection;
+export default Articles;
