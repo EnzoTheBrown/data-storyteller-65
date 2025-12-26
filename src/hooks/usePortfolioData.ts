@@ -17,14 +17,17 @@ export const useExperiences = () => {
     queryKey: ["experiences", language],
     queryFn: async () => {
       try {
-        return await fetchData(getGitHubUrl("experiences/experiences.json", language));
-      } catch {
+        const url = getGitHubUrl("experiences/experiences.json", language);
+        console.log("Fetching experiences from:", url);
+        return await fetchData(url);
+      } catch (error) {
+        console.error("Failed to fetch experiences, using fallback:", error);
         return experiencesData;
       }
     },
-    initialData: experiencesData,
     retry: 1,
     staleTime: 1000 * 60 * 5,
+    refetchOnMount: false,
   });
 };
 
@@ -35,14 +38,17 @@ export const useEducation = () => {
     queryKey: ["education", language],
     queryFn: async () => {
       try {
-        return await fetchData(getGitHubUrl("formations/formations.json", language));
-      } catch {
+        const url = getGitHubUrl("formations/formations.json", language);
+        console.log("Fetching education from:", url);
+        return await fetchData(url);
+      } catch (error) {
+        console.error("Failed to fetch education, using fallback:", error);
         return educationData;
       }
     },
-    initialData: educationData,
     retry: 1,
     staleTime: 1000 * 60 * 5,
+    refetchOnMount: false,
   });
 };
 
