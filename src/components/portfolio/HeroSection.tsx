@@ -1,7 +1,12 @@
 import { getProfilePictureUrl } from "@/hooks/usePortfolioData";
-import { MapPin, Briefcase, Sparkles, Calendar, Layers } from "lucide-react";
+import { MapPin, Briefcase, Sparkles, Calendar, Layers, Linkedin, Twitter } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+
+const LINKEDIN_URL = "https://www.linkedin.com/in/enzolebrun/";
+const TWITTER_SHARE_URL = "https://twitter.com/intent/tweet?text=";
+const RECOMMENDATION_TEXT = "I highly recommend Enzo Lebrun as a Data Scientist & AI Engineer. His expertise in NLP, MLOps, and GenAI is exceptional. Check out his portfolio: ";
+const PORTFOLIO_URL = "https://enzolebrun.com";
 
 const HeroSection = () => {
   return (
@@ -94,6 +99,45 @@ const HeroSection = () => {
                   View Projects
                 </Link>
               </Button>
+            </div>
+
+            {/* Recommendation CTAs */}
+            <div className="flex flex-col gap-3 animate-fade-in" style={{ animationDelay: "0.8s" }}>
+              <p className="text-muted-foreground/70 text-sm text-center lg:text-left">
+                Enjoyed working with me? Spread the word:
+              </p>
+              <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
+                <Button
+                  asChild
+                  size="sm"
+                  variant="secondary"
+                  className="bg-[#0A66C2]/10 hover:bg-[#0A66C2]/20 text-[#0A66C2] border border-[#0A66C2]/30"
+                >
+                  <a
+                    href={LINKEDIN_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Linkedin className="w-4 h-4 mr-2" />
+                    Recommend on LinkedIn
+                  </a>
+                </Button>
+                <Button
+                  asChild
+                  size="sm"
+                  variant="secondary"
+                  className="bg-foreground/5 hover:bg-foreground/10 text-foreground border border-foreground/20"
+                >
+                  <a
+                    href={`${TWITTER_SHARE_URL}${encodeURIComponent(RECOMMENDATION_TEXT + PORTFOLIO_URL)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Twitter className="w-4 h-4 mr-2" />
+                    Share on X
+                  </a>
+                </Button>
+              </div>
             </div>
           </div>
         </div>
