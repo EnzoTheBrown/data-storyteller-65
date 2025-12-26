@@ -1,5 +1,5 @@
 import { getProfilePictureUrl } from "@/hooks/usePortfolioData";
-import { MapPin, Briefcase, Sparkles, Calendar } from "lucide-react";
+import { MapPin, Briefcase, Sparkles, Calendar, Layers } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
@@ -81,11 +81,17 @@ const HeroSection = () => {
               "Build systems you want to debug at 3am." – Charity Majors
             </blockquote>
 
-            <div className="animate-fade-in" style={{ animationDelay: "0.7s" }}>
+            <div className="flex flex-wrap gap-4 justify-center lg:justify-start animate-fade-in" style={{ animationDelay: "0.7s" }}>
               <Button asChild size="lg">
                 <Link to="/schedule">
                   <Calendar className="w-5 h-5 mr-2" />
                   Schedule a Meeting
+                </Link>
+              </Button>
+              <Button asChild size="lg" variant="outline">
+                <Link to="/projects">
+                  <Layers className="w-5 h-5 mr-2" />
+                  View Projects
                 </Link>
               </Button>
             </div>
