@@ -1,19 +1,26 @@
 import { Github, Linkedin, Mail, Twitter } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const LINKEDIN_URL = "https://www.linkedin.com/in/enzolebrun/";
 const TWITTER_SHARE_URL = "https://twitter.com/intent/tweet?text=";
-const RECOMMENDATION_TEXT = "I highly recommend Enzo Lebrun as a Data Scientist & AI Engineer. His expertise in NLP, MLOps, and GenAI is exceptional. Check out his portfolio: ";
 const PORTFOLIO_URL = "https://enzolebrun.com";
 
 const Footer = () => {
+  const { t } = useLanguage();
+
+  const recommendationText = t({
+    en: "I highly recommend Enzo Lebrun as a Data Scientist & AI Engineer. His expertise in NLP, MLOps, and GenAI is exceptional. Check out his portfolio: ",
+    fr: "Je recommande vivement Enzo Lebrun en tant que Data Scientist & AI Engineer. Son expertise en NLP, MLOps et GenAI est exceptionnelle. Découvrez son portfolio : "
+  });
+
   return (
     <footer className="py-12 px-6 border-t border-border/50">
       <div className="container max-w-4xl">
         {/* Recommendation CTAs */}
         <div className="mb-10 text-center">
           <p className="text-muted-foreground mb-4">
-            Enjoyed working with me? Spread the word:
+            {t({ en: "Enjoyed working with me? Spread the word:", fr: "Vous avez aimé travailler avec moi ? Partagez :" })}
           </p>
           <div className="flex flex-wrap gap-3 justify-center">
             <Button
@@ -28,7 +35,7 @@ const Footer = () => {
                 rel="noopener noreferrer"
               >
                 <Linkedin className="w-4 h-4 mr-2" />
-                Recommend on LinkedIn
+                {t({ en: "Recommend on LinkedIn", fr: "Recommander sur LinkedIn" })}
               </a>
             </Button>
             <Button
@@ -38,12 +45,12 @@ const Footer = () => {
               className="bg-foreground/5 hover:bg-foreground/10 text-foreground border border-foreground/20"
             >
               <a
-                href={`${TWITTER_SHARE_URL}${encodeURIComponent(RECOMMENDATION_TEXT + PORTFOLIO_URL)}`}
+                href={`${TWITTER_SHARE_URL}${encodeURIComponent(recommendationText + PORTFOLIO_URL)}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 <Twitter className="w-4 h-4 mr-2" />
-                Share on X
+                {t({ en: "Share on X", fr: "Partager sur X" })}
               </a>
             </Button>
           </div>
@@ -55,7 +62,7 @@ const Footer = () => {
               Portfolio
             </p>
             <p className="text-sm text-muted-foreground">
-              Data Science · IA · Backend
+              Data Science · {t({ en: "AI", fr: "IA" })} · Backend
             </p>
           </div>
 
@@ -90,7 +97,7 @@ const Footer = () => {
 
         <div className="mt-8 pt-8 border-t border-border/30 text-center">
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} · Tous droits réservés
+            © {new Date().getFullYear()} · {t({ en: "All rights reserved", fr: "Tous droits réservés" })}
           </p>
         </div>
       </div>

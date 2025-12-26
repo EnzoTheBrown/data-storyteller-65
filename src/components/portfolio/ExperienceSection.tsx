@@ -1,9 +1,11 @@
 import { useExperiences } from "@/hooks/usePortfolioData";
 import ExperienceCard from "./ExperienceCard";
 import { Briefcase, Loader2 } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const ExperienceSection = () => {
   const { data: experiences, isLoading, error } = useExperiences();
+  const { t } = useLanguage();
 
   if (isLoading) {
     return (
@@ -21,7 +23,7 @@ const ExperienceSection = () => {
     return (
       <section className="py-20 px-6">
         <div className="container max-w-4xl text-center text-muted-foreground">
-          Impossible de charger les expériences.
+          {t({ en: "Unable to load experiences.", fr: "Impossible de charger les expériences." })}
         </div>
       </section>
     );
@@ -41,9 +43,11 @@ const ExperienceSection = () => {
           </div>
           <div>
             <h2 className="font-display text-3xl font-bold text-foreground">
-              Expériences
+              {t({ en: "Experience", fr: "Expériences" })}
             </h2>
-            <p className="text-muted-foreground">Parcours professionnel</p>
+            <p className="text-muted-foreground">
+              {t({ en: "Professional journey", fr: "Parcours professionnel" })}
+            </p>
           </div>
         </div>
 

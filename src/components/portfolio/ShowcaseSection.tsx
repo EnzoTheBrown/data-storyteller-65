@@ -2,26 +2,37 @@ import { useState, useEffect } from "react";
 import { ChevronDown, Layers, Loader2 } from "lucide-react";
 import MarkdownRenderer from "./MarkdownRenderer";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { GITHUB_API_BASE, GITHUB_RAW_BASE } from "@/lib/github";
 
 interface ShowcaseProject {
   name: string;
-  download_url: string;
+  slug: string;
 }
 
-const GITHUB_API_URL = "https://api.github.com/repos/EnzoTheBrown/me/contents/showcases";
-
 const useShowcaseList = () => {
+  const { language } = useLanguage();
   const [projects, setProjects] = useState<ShowcaseProject[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProjects = async () => {
+      setLoading(true);
       try {
-        const response = await fetch(GITHUB_API_URL);
+        const response = await fetch(`${GITHUB_API_BASE}/showcases`);
         if (!response.ok) throw new Error("Failed to fetch project list");
         const data = await response.json();
-        const mdFiles = data.filter((file: any) => file.name.endsWith(".md"));
+        
+        // Filter files for current language
+        const langSuffix = `.${language}.md`;
+        const mdFiles = data
+          .filter((file: any) => file.name.endsWith(langSuffix))
+          .map((file: any) => ({
+            name: file.name,
+            slug: file.name.replace(langSuffix, ""),
+          }));
+        
         setProjects(mdFiles);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load projects");
@@ -31,31 +42,33 @@ const useShowcaseList = () => {
     };
 
     fetchProjects();
-  }, []);
+  }, [language]);
 
   return { projects, loading, error };
 };
 
-const formatTitle = (filename: string): string => {
-  return filename
-    .replace(".md", "")
+const formatTitle = (slug: string): string => {
+  return slug
     .split("-")
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 };
 
-const useShowcaseContent = (url: string, isExpanded: boolean) => {
+const useShowcaseContent = (slug: string, isExpanded: boolean) => {
+  const { language } = useLanguage();
   const [content, setContent] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!isExpanded || content) return;
+    if (!isExpanded) return;
 
     const fetchContent = async () => {
       setLoading(true);
       setError(null);
+      setContent(null);
       try {
+        const url = `${GITHUB_RAW_BASE}/showcases/${slug}.${language}.md`;
         const response = await fetch(url);
         if (!response.ok) throw new Error("Failed to fetch content");
         const text = await response.text();
@@ -68,14 +81,14 @@ const useShowcaseContent = (url: string, isExpanded: boolean) => {
     };
 
     fetchContent();
-  }, [url, isExpanded, content]);
+  }, [slug, language, isExpanded]);
 
   return { content, loading, error };
 };
 
 const ShowcaseCard = ({ project }: { project: ShowcaseProject }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const { content, loading, error } = useShowcaseContent(project.download_url, isExpanded);
+  const { content, loading, error } = useShowcaseContent(project.slug, isExpanded);
 
   return (
     <div className="border border-border/50 rounded-xl overflow-hidden bg-card/30">
@@ -84,7 +97,7 @@ const ShowcaseCard = ({ project }: { project: ShowcaseProject }) => {
         className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-secondary/20 transition-colors"
       >
         <h3 className="font-display font-semibold text-foreground text-lg">
-          {formatTitle(project.name)}
+          {formatTitle(project.slug)}
         </h3>
         <ChevronDown
           className={cn(
@@ -118,6 +131,7 @@ const ShowcaseCard = ({ project }: { project: ShowcaseProject }) => {
 
 const ShowcaseSection = () => {
   const { projects, loading, error } = useShowcaseList();
+  const { t } = useLanguage();
 
   return (
     <section id="showcase" className="py-16 md:py-24 bg-background">
@@ -127,7 +141,7 @@ const ShowcaseSection = () => {
             <Layers className="w-6 h-6 text-primary" />
           </div>
           <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground">
-            Project Showcase
+            {t({ en: "Project Showcase", fr: "Projets" })}
           </h2>
         </div>
 
@@ -143,7 +157,7 @@ const ShowcaseSection = () => {
 
         <div className="space-y-4">
           {projects.map((project) => (
-            <ShowcaseCard key={project.name} project={project} />
+            <ShowcaseCard key={project.slug} project={project} />
           ))}
         </div>
       </div>
