@@ -1,14 +1,19 @@
 import { useEducation } from "@/hooks/usePortfolioData";
 import { Badge } from "@/components/ui/badge";
 import { GraduationCap, Calendar, MapPin, Loader2 } from "lucide-react";
-
-const formatDate = (dateStr: string) => {
-  const date = new Date(dateStr);
-  return date.toLocaleDateString("fr-FR", { month: "short", year: "numeric" });
-};
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const EducationSection = () => {
   const { data: education, isLoading, error } = useEducation();
+  const { language, t } = useLanguage();
+
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString(language === "fr" ? "fr-FR" : "en-US", { 
+      month: "short", 
+      year: "numeric" 
+    });
+  };
 
   if (isLoading) {
     return (
@@ -26,7 +31,7 @@ const EducationSection = () => {
     return (
       <section className="py-20 px-6 bg-secondary/20">
         <div className="container max-w-4xl text-center text-muted-foreground">
-          Impossible de charger les formations.
+          {t({ en: "Unable to load education.", fr: "Impossible de charger les formations." })}
         </div>
       </section>
     );
@@ -46,9 +51,11 @@ const EducationSection = () => {
           </div>
           <div>
             <h2 className="font-display text-3xl font-bold text-foreground">
-              Formation
+              {t({ en: "Education", fr: "Formation" })}
             </h2>
-            <p className="text-muted-foreground">Parcours académique</p>
+            <p className="text-muted-foreground">
+              {t({ en: "Academic background", fr: "Parcours académique" })}
+            </p>
           </div>
         </div>
 

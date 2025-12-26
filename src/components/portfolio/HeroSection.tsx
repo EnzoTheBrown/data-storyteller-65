@@ -2,10 +2,19 @@ import { getProfilePictureUrl } from "@/hooks/usePortfolioData";
 import { MapPin, Briefcase, Sparkles, Calendar, Layers } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import LanguageSwitcher from "./LanguageSwitcher";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const HeroSection = () => {
+  const { t } = useLanguage();
+
   return (
     <section className="relative min-h-[80vh] flex items-center justify-center gradient-hero overflow-hidden">
+      {/* Language Switcher */}
+      <div className="absolute top-6 right-6 z-20">
+        <LanguageSwitcher />
+      </div>
+
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-primary/5 blur-3xl" />
@@ -22,7 +31,7 @@ const HeroSection = () => {
                 alt="Profile"
                 className="w-full h-full object-cover"
                 onError={(e) => {
-                  e.currentTarget.src = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face";
+                  e.currentTarget.src = "https://images.unsplash.com/photo-unsplash?w=400&h=400&fit=crop&crop=face";
                 }}
               />
             </div>
@@ -55,9 +64,10 @@ const HeroSection = () => {
               className="text-muted-foreground text-lg md:text-xl leading-relaxed mb-8 animate-fade-in"
               style={{ animationDelay: "0.4s" }}
             >
-              Spécialisé en NLP, MLOps et systèmes distribués. 
-              De la conception de modèles de Machine Learning à leur mise en production, 
-              je transforme les idées en solutions IA fiables et scalables.
+              {t({
+                en: "Specialized in NLP, MLOps and distributed systems. From designing Machine Learning models to production deployment, I transform ideas into reliable and scalable AI solutions.",
+                fr: "Spécialisé en NLP, MLOps et systèmes distribués. De la conception de modèles de Machine Learning à leur mise en production, je transforme les idées en solutions IA fiables et scalables."
+              })}
             </p>
             
             <div 
@@ -85,13 +95,13 @@ const HeroSection = () => {
               <Button asChild size="lg">
                 <Link to="/schedule">
                   <Calendar className="w-5 h-5 mr-2" />
-                  Schedule a Meeting
+                  {t({ en: "Schedule a Meeting", fr: "Prendre rendez-vous" })}
                 </Link>
               </Button>
               <Button asChild size="lg" variant="outline">
                 <Link to="/projects">
                   <Layers className="w-5 h-5 mr-2" />
-                  View Projects
+                  {t({ en: "View Projects", fr: "Voir les projets" })}
                 </Link>
               </Button>
             </div>
