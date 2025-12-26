@@ -4,18 +4,45 @@ import MarkdownRenderer from "./MarkdownRenderer";
 import { cn } from "@/lib/utils";
 
 interface ShowcaseProject {
-  id: string;
-  title: string;
-  url: string;
+  name: string;
+  download_url: string;
 }
 
-const showcaseProjects: ShowcaseProject[] = [
-  {
-    id: "nlp-sav-routing",
-    title: "NLP Expertise — Fine-Tuning for SAV Routing (AWS SageMaker)",
-    url: "https://raw.githubusercontent.com/EnzoTheBrown/me/main/showcases/nlp-expertise.md",
-  },
-];
+const GITHUB_API_URL = "https://api.github.com/repos/EnzoTheBrown/me/contents/showcases";
+
+const useShowcaseList = () => {
+  const [projects, setProjects] = useState<ShowcaseProject[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await fetch(GITHUB_API_URL);
+        if (!response.ok) throw new Error("Failed to fetch project list");
+        const data = await response.json();
+        const mdFiles = data.filter((file: any) => file.name.endsWith(".md"));
+        setProjects(mdFiles);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to load projects");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
+  return { projects, loading, error };
+};
+
+const formatTitle = (filename: string): string => {
+  return filename
+    .replace(".md", "")
+    .split("-")
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};
 
 const useShowcaseContent = (url: string, isExpanded: boolean) => {
   const [content, setContent] = useState<string | null>(null);
@@ -48,7 +75,7 @@ const useShowcaseContent = (url: string, isExpanded: boolean) => {
 
 const ShowcaseCard = ({ project }: { project: ShowcaseProject }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const { content, loading, error } = useShowcaseContent(project.url, isExpanded);
+  const { content, loading, error } = useShowcaseContent(project.download_url, isExpanded);
 
   return (
     <div className="border border-border/50 rounded-xl overflow-hidden bg-card/30">
@@ -57,7 +84,7 @@ const ShowcaseCard = ({ project }: { project: ShowcaseProject }) => {
         className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-secondary/20 transition-colors"
       >
         <h3 className="font-display font-semibold text-foreground text-lg">
-          {project.title}
+          {formatTitle(project.name)}
         </h3>
         <ChevronDown
           className={cn(
@@ -90,6 +117,8 @@ const ShowcaseCard = ({ project }: { project: ShowcaseProject }) => {
 };
 
 const ShowcaseSection = () => {
+  const { projects, loading, error } = useShowcaseList();
+
   return (
     <section id="showcase" className="py-16 md:py-24 bg-background">
       <div className="container px-6 max-w-5xl mx-auto">
@@ -102,9 +131,19 @@ const ShowcaseSection = () => {
           </h2>
         </div>
 
+        {loading && (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          </div>
+        )}
+
+        {error && (
+          <p className="text-destructive text-center">{error}</p>
+        )}
+
         <div className="space-y-4">
-          {showcaseProjects.map((project) => (
-            <ShowcaseCard key={project.id} project={project} />
+          {projects.map((project) => (
+            <ShowcaseCard key={project.name} project={project} />
           ))}
         </div>
       </div>
