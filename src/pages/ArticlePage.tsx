@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Loader2, FileText } from "lucide-react";
 import MarkdownRenderer from "@/components/portfolio/MarkdownRenderer";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { GITHUB_RAW_BASE } from "@/lib/github";
+import { getContentUrl } from "@/lib/s3";
 import LanguageSwitcher from "@/components/portfolio/LanguageSwitcher";
 
 const formatTitle = (slug: string): string => {
@@ -26,7 +26,8 @@ const useArticleContent = (slug: string | undefined) => {
       setLoading(true);
       setError(null);
       try {
-        const url = `${GITHUB_RAW_BASE}/articles/${slug}.${language}.md`;
+        const path = `articles/${slug}.${language}.md`;
+        const url = getContentUrl(path);
         const response = await fetch(url);
         if (!response.ok) throw new Error("Failed to fetch content");
         const text = await response.text();
