@@ -4,48 +4,39 @@ import { ChevronDown, FileText, Loader2, ArrowRight } from "lucide-react";
 import MarkdownRenderer from "./MarkdownRenderer";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { GITHUB_API_BASE, GITHUB_RAW_BASE } from "@/lib/github";
+import { useContentIndex } from "@/hooks/useContentIndex";
+import { getContentUrl } from "@/lib/s3";
 
 interface Article {
   name: string;
   slug: string;
+  path: string;
 }
+
+const extractSlugFromPath = (path: string, lang: string): string | null => {
+  const langSuffix = `.${lang}.md`;
+  if (!path.endsWith(langSuffix)) return null;
+  const filename = path.split("/").pop() || "";
+  return filename.replace(langSuffix, "");
+};
 
 const useArticleList = () => {
   const { language } = useLanguage();
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data: index, isLoading, error } = useContentIndex();
 
-  useEffect(() => {
-    const fetchArticles = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(`${GITHUB_API_BASE}/articles`);
-        if (!response.ok) throw new Error("Failed to fetch article list");
-        const data = await response.json();
-        
-        // Filter files for current language
-        const langSuffix = `.${language}.md`;
-        const mdFiles = data
-          .filter((file: any) => file.name.endsWith(langSuffix))
-          .map((file: any) => ({
-            name: file.name,
-            slug: file.name.replace(langSuffix, ""),
-          }));
-        
-        setArticles(mdFiles);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load articles");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const articles: Article[] = (index?.articles || [])
+    .map(path => {
+      const slug = extractSlugFromPath(path, language);
+      if (!slug) return null;
+      return { name: path, slug, path };
+    })
+    .filter((a): a is Article => a !== null);
 
-    fetchArticles();
-  }, [language]);
-
-  return { articles, loading, error };
+  return { 
+    articles, 
+    loading: isLoading, 
+    error: error?.message || null 
+  };
 };
 
 const formatTitle = (slug: string): string => {
@@ -55,8 +46,7 @@ const formatTitle = (slug: string): string => {
     .join(" ");
 };
 
-const useArticleContent = (slug: string, isExpanded: boolean) => {
-  const { language } = useLanguage();
+const useArticleContent = (path: string, isExpanded: boolean) => {
   const [content, setContent] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -69,7 +59,7 @@ const useArticleContent = (slug: string, isExpanded: boolean) => {
       setError(null);
       setContent(null);
       try {
-        const url = `${GITHUB_RAW_BASE}/articles/${slug}.${language}.md`;
+        const url = getContentUrl(path);
         const response = await fetch(url);
         if (!response.ok) throw new Error("Failed to fetch content");
         const text = await response.text();
@@ -82,14 +72,14 @@ const useArticleContent = (slug: string, isExpanded: boolean) => {
     };
 
     fetchContent();
-  }, [slug, language, isExpanded]);
+  }, [path, isExpanded]);
 
   return { content, loading, error };
 };
 
 const ArticleCard = ({ article }: { article: Article }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const { content, loading, error } = useArticleContent(article.slug, isExpanded);
+  const { content, loading, error } = useArticleContent(article.path, isExpanded);
 
   return (
     <div className="border border-border/50 rounded-xl overflow-hidden bg-card/30">

@@ -3,49 +3,14 @@ import { ChevronDown, Layers, Loader2 } from "lucide-react";
 import MarkdownRenderer from "./MarkdownRenderer";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { GITHUB_API_BASE, GITHUB_RAW_BASE } from "@/lib/github";
+import { useContentIndex } from "@/hooks/useContentIndex";
+import { getContentUrl } from "@/lib/s3";
 
 interface ShowcaseProject {
   name: string;
   slug: string;
+  path: string;
 }
-
-const useShowcaseList = () => {
-  const { language } = useLanguage();
-  const [projects, setProjects] = useState<ShowcaseProject[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchProjects = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(`${GITHUB_API_BASE}/showcases`);
-        if (!response.ok) throw new Error("Failed to fetch project list");
-        const data = await response.json();
-        
-        // Filter files for current language
-        const langSuffix = `.${language}.md`;
-        const mdFiles = data
-          .filter((file: any) => file.name.endsWith(langSuffix))
-          .map((file: any) => ({
-            name: file.name,
-            slug: file.name.replace(langSuffix, ""),
-          }));
-        
-        setProjects(mdFiles);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load projects");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProjects();
-  }, [language]);
-
-  return { projects, loading, error };
-};
 
 const formatTitle = (slug: string): string => {
   return slug
@@ -54,8 +19,34 @@ const formatTitle = (slug: string): string => {
     .join(" ");
 };
 
-const useShowcaseContent = (slug: string, isExpanded: boolean) => {
+const extractSlugFromPath = (path: string, lang: string): string | null => {
+  // path: "showcases/my-project.fr.md" -> "my-project"
+  const langSuffix = `.${lang}.md`;
+  if (!path.endsWith(langSuffix)) return null;
+  const filename = path.split("/").pop() || "";
+  return filename.replace(langSuffix, "");
+};
+
+const useShowcaseList = () => {
   const { language } = useLanguage();
+  const { data: index, isLoading, error } = useContentIndex();
+
+  const projects: ShowcaseProject[] = (index?.showcases || [])
+    .map(path => {
+      const slug = extractSlugFromPath(path, language);
+      if (!slug) return null;
+      return { name: path, slug, path };
+    })
+    .filter((p): p is ShowcaseProject => p !== null);
+
+  return { 
+    projects, 
+    loading: isLoading, 
+    error: error?.message || null 
+  };
+};
+
+const useShowcaseContent = (path: string, isExpanded: boolean) => {
   const [content, setContent] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -68,7 +59,7 @@ const useShowcaseContent = (slug: string, isExpanded: boolean) => {
       setError(null);
       setContent(null);
       try {
-        const url = `${GITHUB_RAW_BASE}/showcases/${slug}.${language}.md`;
+        const url = getContentUrl(path);
         const response = await fetch(url);
         if (!response.ok) throw new Error("Failed to fetch content");
         const text = await response.text();
@@ -81,14 +72,14 @@ const useShowcaseContent = (slug: string, isExpanded: boolean) => {
     };
 
     fetchContent();
-  }, [slug, language, isExpanded]);
+  }, [path, isExpanded]);
 
   return { content, loading, error };
 };
 
 const ShowcaseCard = ({ project }: { project: ShowcaseProject }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const { content, loading, error } = useShowcaseContent(project.slug, isExpanded);
+  const { content, loading, error } = useShowcaseContent(project.path, isExpanded);
 
   return (
     <div className="border border-border/50 rounded-xl overflow-hidden bg-card/30">

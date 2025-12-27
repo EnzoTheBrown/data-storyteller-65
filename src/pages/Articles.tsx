@@ -1,8 +1,7 @@
-import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown, FileText, Loader2, ArrowLeft } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { GITHUB_API_BASE } from "@/lib/github";
+import { useContentIndex } from "@/hooks/useContentIndex";
 import LanguageSwitcher from "@/components/portfolio/LanguageSwitcher";
 
 interface Article {
@@ -10,40 +9,31 @@ interface Article {
   slug: string;
 }
 
+const extractSlugFromPath = (path: string, lang: string): string | null => {
+  // path: "articles/my-article.fr.md" -> "my-article"
+  const langSuffix = `.${lang}.md`;
+  if (!path.endsWith(langSuffix)) return null;
+  const filename = path.split("/").pop() || "";
+  return filename.replace(langSuffix, "");
+};
+
 const useArticleList = () => {
   const { language } = useLanguage();
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data: index, isLoading, error } = useContentIndex();
 
-  useEffect(() => {
-    const fetchArticles = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(`${GITHUB_API_BASE}/articles`);
-        if (!response.ok) throw new Error("Failed to fetch article list");
-        const data = await response.json();
-        
-        const langSuffix = `.${language}.md`;
-        const mdFiles = data
-          .filter((file: any) => file.name.endsWith(langSuffix))
-          .map((file: any) => ({
-            name: file.name,
-            slug: file.name.replace(langSuffix, ""),
-          }));
-        
-        setArticles(mdFiles);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load articles");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const articles: Article[] = (index?.articles || [])
+    .map(path => {
+      const slug = extractSlugFromPath(path, language);
+      if (!slug) return null;
+      return { name: path, slug };
+    })
+    .filter((a): a is Article => a !== null);
 
-    fetchArticles();
-  }, [language]);
-
-  return { articles, loading, error };
+  return { 
+    articles, 
+    loading: isLoading, 
+    error: error?.message || null 
+  };
 };
 
 const formatTitle = (slug: string): string => {
@@ -52,7 +42,6 @@ const formatTitle = (slug: string): string => {
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 };
-
 
 const ArticleCard = ({ article }: { article: Article }) => {
   return (

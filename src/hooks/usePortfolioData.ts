@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import type { Experience, Education } from "@/types/portfolio";
 import { experiencesData, educationData } from "@/data/portfolioData";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { getGitHubUrl, getProfilePictureUrl } from "@/lib/github";
+import { getExperiencesUrl, getFormationsUrl, getProfilePictureUrl } from "@/lib/s3";
 
 const fetchData = async (url: string) => {
   const response = await fetch(url);
@@ -17,7 +17,7 @@ export const useExperiences = () => {
     queryKey: ["experiences", language],
     queryFn: async () => {
       try {
-        const url = getGitHubUrl("experiences/experiences.json", language);
+        const url = getExperiencesUrl(language);
         console.log("Fetching experiences from:", url);
         return await fetchData(url);
       } catch (error) {
@@ -38,7 +38,7 @@ export const useEducation = () => {
     queryKey: ["education", language],
     queryFn: async () => {
       try {
-        const url = getGitHubUrl("formations/formations.json", language);
+        const url = getFormationsUrl(language);
         console.log("Fetching education from:", url);
         return await fetchData(url);
       } catch (error) {
