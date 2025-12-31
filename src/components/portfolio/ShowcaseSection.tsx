@@ -4,27 +4,23 @@ import MarkdownRenderer from "./MarkdownRenderer";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useContentIndex } from "@/hooks/useContentIndex";
-import { getContentUrl } from "@/lib/s3";
+import { getContentUrl, type ContentItem } from "@/lib/s3";
 
 interface ShowcaseProject {
   name: string;
-  slug: string;
+  title: string;
   path: string;
 }
 
-const formatTitle = (slug: string): string => {
-  return slug
-    .split("-")
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
+const cleanTitle = (title: string): string => {
+  // Remove markdown heading prefix (# ) and trim
+  return title.replace(/^#\s*/, "").trim();
 };
 
-const extractSlugFromPath = (path: string, lang: string): string | null => {
-  // path: "showcases/my-project.fr.md" -> "my-project"
-  const langSuffix = `.${lang}.md`;
-  if (!path.endsWith(langSuffix)) return null;
-  const filename = path.split("/").pop() || "";
-  return filename.replace(langSuffix, "");
+const detectLanguage = (title: string): "en" | "fr" => {
+  // Simple heuristic: check for common French characters/words
+  const frenchIndicators = /[éèêëàâäùûüôöîïç]|d'un|l'|qu'|système|étude/i;
+  return frenchIndicators.test(title) ? "fr" : "en";
 };
 
 const useShowcaseList = () => {
@@ -32,12 +28,12 @@ const useShowcaseList = () => {
   const { data: index, isLoading, error } = useContentIndex();
 
   const projects: ShowcaseProject[] = (index?.showcases || [])
-    .map(path => {
-      const slug = extractSlugFromPath(path, language);
-      if (!slug) return null;
-      return { name: path, slug, path };
-    })
-    .filter((p): p is ShowcaseProject => p !== null);
+    .filter((item: ContentItem) => detectLanguage(item.title) === language)
+    .map((item: ContentItem) => ({
+      name: item.name,
+      title: cleanTitle(item.title),
+      path: item.name,
+    }));
 
   return { 
     projects, 
@@ -88,7 +84,7 @@ const ShowcaseCard = ({ project }: { project: ShowcaseProject }) => {
         className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-secondary/20 transition-colors"
       >
         <h3 className="font-display font-semibold text-foreground text-lg">
-          {formatTitle(project.slug)}
+          {project.title}
         </h3>
         <ChevronDown
           className={cn(
@@ -148,7 +144,7 @@ const ShowcaseSection = () => {
 
         <div className="space-y-4">
           {projects.map((project) => (
-            <ShowcaseCard key={project.slug} project={project} />
+            <ShowcaseCard key={project.name} project={project} />
           ))}
         </div>
       </div>
