@@ -2,9 +2,15 @@ import type { Language } from "@/contexts/LanguageContext";
 
 export const S3_BASE_URL = "https://s3.eu-west-1.amazonaws.com/enzolebrun.dev";
 
+export interface ContentItem {
+  name: string;
+  title: string;
+}
+
 export interface ContentIndex {
-  articles: string[];
-  showcases: string[];
+  generated_at: string;
+  articles: ContentItem[];
+  showcases: ContentItem[];
 }
 
 export const getContentUrl = (path: string) => `${S3_BASE_URL}/${path}`;

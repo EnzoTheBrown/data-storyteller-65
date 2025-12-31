@@ -3,18 +3,26 @@ import { ChevronDown, FileText, Loader2, ArrowLeft } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useContentIndex } from "@/hooks/useContentIndex";
 import LanguageSwitcher from "@/components/portfolio/LanguageSwitcher";
+import { type ContentItem } from "@/lib/s3";
 
 interface Article {
   name: string;
-  slug: string;
+  title: string;
 }
 
-const extractSlugFromPath = (path: string, lang: string): string | null => {
-  // path: "articles/my-article.fr.md" -> "my-article"
-  const langSuffix = `.${lang}.md`;
-  if (!path.endsWith(langSuffix)) return null;
-  const filename = path.split("/").pop() || "";
-  return filename.replace(langSuffix, "");
+const cleanTitle = (title: string): string => {
+  return title.replace(/^#\s*/, "").trim();
+};
+
+const detectLanguage = (title: string): "en" | "fr" => {
+  const frenchIndicators = /[éèêëàâäùûüôöîïç]|d'un|l'|qu'|système|étude/i;
+  return frenchIndicators.test(title) ? "fr" : "en";
+};
+
+const extractSlugFromName = (name: string): string => {
+  // Extract UUID from path like "articles/942499319d174a3f83cf46fd61469a93.md"
+  const filename = name.split("/").pop() || "";
+  return filename.replace(".md", "");
 };
 
 const useArticleList = () => {
@@ -22,12 +30,11 @@ const useArticleList = () => {
   const { data: index, isLoading, error } = useContentIndex();
 
   const articles: Article[] = (index?.articles || [])
-    .map(path => {
-      const slug = extractSlugFromPath(path, language);
-      if (!slug) return null;
-      return { name: path, slug };
-    })
-    .filter((a): a is Article => a !== null);
+    .filter((item: ContentItem) => detectLanguage(item.title) === language)
+    .map((item: ContentItem) => ({
+      name: item.name,
+      title: cleanTitle(item.title),
+    }));
 
   return { 
     articles, 
@@ -36,22 +43,17 @@ const useArticleList = () => {
   };
 };
 
-const formatTitle = (slug: string): string => {
-  return slug
-    .split("-")
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-};
-
 const ArticleCard = ({ article }: { article: Article }) => {
+  const slug = extractSlugFromName(article.name);
+  
   return (
     <Link 
-      to={`/articles/${article.slug}`}
+      to={`/articles/${slug}`}
       className="block border border-border/50 rounded-xl overflow-hidden bg-card/30 hover:bg-secondary/20 transition-colors"
     >
       <div className="px-6 py-5 flex items-center justify-between">
         <h3 className="font-display font-semibold text-foreground text-lg">
-          {formatTitle(article.slug)}
+          {article.title}
         </h3>
         <ChevronDown className="w-5 h-5 text-muted-foreground -rotate-90" />
       </div>
@@ -100,7 +102,7 @@ const Articles = () => {
 
         <div className="space-y-4">
           {articles.map((article) => (
-            <ArticleCard key={article.slug} article={article} />
+            <ArticleCard key={article.name} article={article} />
           ))}
         </div>
       </main>

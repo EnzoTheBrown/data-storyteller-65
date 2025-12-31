@@ -3,30 +3,64 @@ import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Loader2, FileText } from "lucide-react";
 import MarkdownRenderer from "@/components/portfolio/MarkdownRenderer";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { getContentUrl } from "@/lib/s3";
+import { getContentUrl, type ContentItem } from "@/lib/s3";
+import { useContentIndex } from "@/hooks/useContentIndex";
 import LanguageSwitcher from "@/components/portfolio/LanguageSwitcher";
 
-const formatTitle = (slug: string): string => {
-  return slug
-    .split("-")
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
+const cleanTitle = (title: string): string => {
+  return title.replace(/^#\s*/, "").trim();
+};
+
+const detectLanguage = (title: string): "en" | "fr" => {
+  const frenchIndicators = /[éèêëàâäùûüôöîïç]|d'un|l'|qu'|système|étude/i;
+  return frenchIndicators.test(title) ? "fr" : "en";
 };
 
 const useArticleContent = (slug: string | undefined) => {
   const { language } = useLanguage();
+  const { data: index } = useContentIndex();
   const [content, setContent] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [articleTitle, setArticleTitle] = useState<string>("");
 
   useEffect(() => {
-    if (!slug) return;
+    if (!slug || !index) return;
 
-    const fetchContent = async () => {
+    // Find the article by matching the UUID in the name
+    const article = index.articles.find((item: ContentItem) => {
+      const filename = item.name.split("/").pop() || "";
+      const itemSlug = filename.replace(".md", "");
+      return itemSlug === slug && detectLanguage(item.title) === language;
+    });
+
+    if (!article) {
+      // Try to find in any language as fallback
+      const fallbackArticle = index.articles.find((item: ContentItem) => {
+        const filename = item.name.split("/").pop() || "";
+        const itemSlug = filename.replace(".md", "");
+        return itemSlug === slug;
+      });
+
+      if (!fallbackArticle) {
+        setError("Article not found");
+        setLoading(false);
+        return;
+      }
+
+      // Use fallback article
+      setArticleTitle(cleanTitle(fallbackArticle.title));
+      fetchArticleContent(fallbackArticle.name);
+      return;
+    }
+
+    setArticleTitle(cleanTitle(article.title));
+    fetchArticleContent(article.name);
+
+    async function fetchArticleContent(path: string) {
       setLoading(true);
       setError(null);
       try {
-        const path = `articles/${slug}.${language}.md`;
         const url = getContentUrl(path);
         const response = await fetch(url);
         if (!response.ok) throw new Error("Failed to fetch content");
@@ -37,17 +71,15 @@ const useArticleContent = (slug: string | undefined) => {
       } finally {
         setLoading(false);
       }
-    };
+    }
+  }, [slug, language, index]);
 
-    fetchContent();
-  }, [slug, language]);
-
-  return { content, loading, error };
+  return { content, loading, error, title: articleTitle };
 };
 
 const ArticlePage = () => {
   const { slug } = useParams<{ slug: string }>();
-  const { content, loading, error } = useArticleContent(slug);
+  const { content, loading, error, title } = useArticleContent(slug);
   const { t } = useLanguage();
 
   return (
@@ -71,7 +103,7 @@ const ArticlePage = () => {
             <FileText className="w-6 h-6 text-primary" />
           </div>
           <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground">
-            {slug ? formatTitle(slug) : "Article"}
+            {title || "Article"}
           </h1>
         </div>
 
