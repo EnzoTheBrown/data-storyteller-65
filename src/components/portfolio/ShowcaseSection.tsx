@@ -1,10 +1,8 @@
-import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { ChevronDown, Layers, Loader2 } from "lucide-react";
-import MarkdownRenderer from "./MarkdownRenderer";
-import { cn } from "@/lib/utils";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useContentIndex } from "@/hooks/useContentIndex";
-import { getContentUrl, type ContentItem } from "@/lib/s3";
+import { type ContentItem } from "@/lib/s3";
 
 interface ShowcaseProject {
   name: string;
@@ -42,77 +40,21 @@ const useShowcaseList = () => {
   };
 };
 
-const useShowcaseContent = (path: string, isExpanded: boolean) => {
-  const [content, setContent] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!isExpanded) return;
-
-    const fetchContent = async () => {
-      setLoading(true);
-      setError(null);
-      setContent(null);
-      try {
-        const url = getContentUrl(path);
-        const response = await fetch(url);
-        if (!response.ok) throw new Error("Failed to fetch content");
-        const text = await response.text();
-        setContent(text);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load content");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchContent();
-  }, [path, isExpanded]);
-
-  return { content, loading, error };
-};
-
 const ShowcaseCard = ({ project }: { project: ShowcaseProject }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const { content, loading, error } = useShowcaseContent(project.path, isExpanded);
+  const slug = project.name.split("/").pop()?.replace(".md", "") || "";
 
   return (
-    <div className="border border-border/50 rounded-xl overflow-hidden bg-card/30">
-      <button
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-secondary/20 transition-colors"
-      >
+    <Link
+      to={`/projects/${slug}`}
+      className="block border border-border/50 rounded-xl overflow-hidden bg-card/30 hover:bg-secondary/20 transition-colors"
+    >
+      <div className="px-6 py-5 flex items-center justify-between">
         <h3 className="font-display font-semibold text-foreground text-lg">
           {project.title}
         </h3>
-        <ChevronDown
-          className={cn(
-            "w-5 h-5 text-muted-foreground transition-transform duration-300",
-            isExpanded && "rotate-180"
-          )}
-        />
-      </button>
-
-      <div
-        className={cn(
-          "overflow-hidden transition-all duration-300",
-          isExpanded ? "max-h-[5000px]" : "max-h-0"
-        )}
-      >
-        <div className="px-6 pb-6 pt-2">
-          {loading && (
-            <div className="flex items-center justify-center py-8">
-              <Loader2 className="w-6 h-6 animate-spin text-primary" />
-            </div>
-          )}
-          {error && (
-            <p className="text-destructive text-sm">{error}</p>
-          )}
-          {content && <MarkdownRenderer content={content} />}
-        </div>
+        <ChevronDown className="w-5 h-5 text-muted-foreground -rotate-90" />
       </div>
-    </div>
+    </Link>
   );
 };
 
