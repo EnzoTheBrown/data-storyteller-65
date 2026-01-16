@@ -1,5 +1,5 @@
 import { getProfilePictureUrl } from "@/hooks/usePortfolioData";
-import { MapPin, Briefcase, Sparkles, Calendar, Layers, FileText } from "lucide-react";
+import { MapPin, Briefcase, Sparkles, Calendar, Layers } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import LanguageSwitcher from "./LanguageSwitcher";
@@ -102,12 +102,6 @@ const HeroSection = () => {
                 <Link to="/projects">
                   <Layers className="w-5 h-5 mr-2" />
                   {t({ en: "View Projects", fr: "Voir les projets" })}
-                </Link>
-              </Button>
-              <Button asChild size="lg" variant="outline">
-                <Link to="/articles">
-                  <FileText className="w-5 h-5 mr-2" />
-                  {t({ en: "Read Articles", fr: "Lire les articles" })}
                 </Link>
               </Button>
             </div>
