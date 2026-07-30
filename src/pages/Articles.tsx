@@ -3,7 +3,7 @@ import { ChevronDown, FileText, Loader2, ArrowLeft } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useContentIndex } from "@/hooks/useContentIndex";
 import LanguageSwitcher from "@/components/portfolio/LanguageSwitcher";
-import { type ContentItem } from "@/lib/s3";
+import { type ContentItem } from "@/lib/content";
 
 interface Article {
   name: string;

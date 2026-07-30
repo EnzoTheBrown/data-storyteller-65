@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { ChevronDown, Layers, Loader2 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useContentIndex } from "@/hooks/useContentIndex";
-import { type ContentItem } from "@/lib/s3";
+import { type ContentItem } from "@/lib/content";
 
 interface ShowcaseProject {
   name: string;
