@@ -1,55 +1,17 @@
-import { useQuery } from "@tanstack/react-query";
 import type { Experience, Education } from "@/types/portfolio";
-import { experiencesData, educationData } from "@/data/portfolioData";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { getExperiencesUrl, getFormationsUrl, getProfilePictureUrl } from "@/lib/s3";
-
-const fetchData = async (url: string) => {
-  const response = await fetch(url);
-  if (!response.ok) throw new Error("Network response was not ok");
-  return response.json();
-};
+import { getExperiences, getFormations, getProfilePictureUrl } from "@/lib/content";
 
 export const useExperiences = () => {
   const { language } = useLanguage();
-  
-  return useQuery<Experience[]>({
-    queryKey: ["experiences", language],
-    queryFn: async () => {
-      try {
-        const url = getExperiencesUrl(language);
-        console.log("Fetching experiences from:", url);
-        return await fetchData(url);
-      } catch (error) {
-        console.error("Failed to fetch experiences, using fallback:", error);
-        return experiencesData;
-      }
-    },
-    retry: 1,
-    staleTime: 1000 * 60 * 5,
-    refetchOnMount: false,
-  });
+  const data: Experience[] = getExperiences(language);
+  return { data, isLoading: false, error: null as Error | null };
 };
 
 export const useEducation = () => {
   const { language } = useLanguage();
-  
-  return useQuery<Education[]>({
-    queryKey: ["education", language],
-    queryFn: async () => {
-      try {
-        const url = getFormationsUrl(language);
-        console.log("Fetching education from:", url);
-        return await fetchData(url);
-      } catch (error) {
-        console.error("Failed to fetch education, using fallback:", error);
-        return educationData;
-      }
-    },
-    retry: 1,
-    staleTime: 1000 * 60 * 5,
-    refetchOnMount: false,
-  });
+  const data: Education[] = getFormations(language);
+  return { data, isLoading: false, error: null as Error | null };
 };
 
 export { getProfilePictureUrl };

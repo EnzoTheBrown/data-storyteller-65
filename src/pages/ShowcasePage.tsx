@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Loader2, Briefcase } from "lucide-react";
 import MarkdownRenderer from "@/components/portfolio/MarkdownRenderer";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { getContentUrl, type ContentItem } from "@/lib/s3";
+import { getContentBody, type ContentItem } from "@/lib/content";
 import { useContentIndex } from "@/hooks/useContentIndex";
 import LanguageSwitcher from "@/components/portfolio/LanguageSwitcher";
 
@@ -61,10 +61,8 @@ const useShowcaseContent = (slug: string | undefined) => {
       setLoading(true);
       setError(null);
       try {
-        const url = getContentUrl(path);
-        const response = await fetch(url);
-        if (!response.ok) throw new Error("Failed to fetch content");
-        const text = await response.text();
+        const text = getContentBody(path);
+        if (text === null) throw new Error("Content not found");
         setContent(text);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load content");
