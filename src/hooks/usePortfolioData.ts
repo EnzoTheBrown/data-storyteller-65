@@ -1,17 +1,41 @@
+import { useQuery } from "@tanstack/react-query";
 import type { Experience, Education } from "@/types/portfolio";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { getExperiences, getFormations, getProfilePictureUrl } from "@/lib/content";
+import {
+  fetchJson,
+  getLocalExperiences,
+  getLocalFormations,
+  getProfilePictureUrl,
+} from "@/lib/content";
 
 export const useExperiences = () => {
   const { language } = useLanguage();
-  const data: Experience[] = getExperiences(language);
-  return { data, isLoading: false, error: null as Error | null };
+
+  return useQuery<Experience[]>({
+    queryKey: ["experiences", language],
+    queryFn: () =>
+      fetchJson<Experience[]>(
+        `experiences/experiences.${language}.json`,
+        getLocalExperiences(language),
+      ),
+    placeholderData: getLocalExperiences(language),
+    staleTime: 1000 * 60 * 5,
+  });
 };
 
 export const useEducation = () => {
   const { language } = useLanguage();
-  const data: Education[] = getFormations(language);
-  return { data, isLoading: false, error: null as Error | null };
+
+  return useQuery<Education[]>({
+    queryKey: ["education", language],
+    queryFn: () =>
+      fetchJson<Education[]>(
+        `formations/formations.${language}.json`,
+        getLocalFormations(language),
+      ),
+    placeholderData: getLocalFormations(language),
+    staleTime: 1000 * 60 * 5,
+  });
 };
 
 export { getProfilePictureUrl };

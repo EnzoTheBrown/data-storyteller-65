@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Loader2, FileText } from "lucide-react";
 import MarkdownRenderer from "@/components/portfolio/MarkdownRenderer";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { getContentBody, type ContentItem } from "@/lib/content";
+import { fetchContentBody, type ContentItem } from "@/lib/content";
 import { useContentIndex } from "@/hooks/useContentIndex";
 import LanguageSwitcher from "@/components/portfolio/LanguageSwitcher";
 
@@ -61,8 +61,7 @@ const useArticleContent = (slug: string | undefined) => {
       setLoading(true);
       setError(null);
       try {
-        const text = getContentBody(path);
-        if (text === null) throw new Error("Content not found");
+        const text = await fetchContentBody(path);
         setContent(text);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load content");
