@@ -6,6 +6,13 @@ import formationsFr from "@/data/formations.fr.json";
 import type { Language } from "@/contexts/LanguageContext";
 import type { Experience, Education } from "@/types/portfolio";
 
+/** Contenu servi depuis le repo GitHub (branche main) */
+export const GITHUB_RAW_BASE =
+  "https://raw.githubusercontent.com/EnzoTheBrown/me/main";
+
+export const getRawUrl = (path: string) =>
+  `${GITHUB_RAW_BASE}/${path.replace(/^\/+/, "")}`;
+
 export interface ContentItem {
   name: string;
   title: string;
@@ -17,7 +24,7 @@ export interface ContentIndex {
   showcases: ContentItem[];
 }
 
-// Markdown bundled at build time (no remote fetch)
+// Copie locale du contenu (fallback si GitHub est injoignable)
 const markdownModules = import.meta.glob("/src/content/**/*.md", {
   query: "?raw",
   import: "default",
@@ -26,10 +33,23 @@ const markdownModules = import.meta.glob("/src/content/**/*.md", {
 
 const normalize = (path: string) => `/src/content/${path.replace(/^\/+/, "")}`;
 
-export const getContentBody = (path: string): string | null =>
+export const getLocalContentBody = (path: string): string | null =>
   markdownModules[normalize(path)] ?? null;
 
-export const contentIndex: ContentIndex = {
+/** Récupère un markdown depuis GitHub, avec repli sur la copie locale. */
+export const fetchContentBody = async (path: string): Promise<string> => {
+  try {
+    const response = await fetch(getRawUrl(path), { cache: "no-cache" });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return await response.text();
+  } catch (error) {
+    const local = getLocalContentBody(path);
+    if (local !== null) return local;
+    throw error instanceof Error ? error : new Error("Content not found");
+  }
+};
+
+export const localContentIndex: ContentIndex = {
   generated_at: "2026-01-04T10:29:11.929929+00:00",
   articles: [
     {
@@ -69,10 +89,32 @@ export const contentIndex: ContentIndex = {
   ],
 };
 
-export const getExperiences = (lang: Language): Experience[] =>
+export const fetchContentIndex = async (): Promise<ContentIndex> => {
+  try {
+    const response = await fetch(getRawUrl("index.json"), { cache: "no-cache" });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return (await response.json()) as ContentIndex;
+  } catch (error) {
+    console.warn("index.json indisponible sur GitHub, fallback local", error);
+    return localContentIndex;
+  }
+};
+
+export const getLocalExperiences = (lang: Language): Experience[] =>
   (lang === "fr" ? experiencesFr : experiencesEn) as unknown as Experience[];
 
-export const getFormations = (lang: Language): Education[] =>
+export const getLocalFormations = (lang: Language): Education[] =>
   (lang === "fr" ? formationsFr : formationsEn) as unknown as Education[];
+
+export const fetchJson = async <T,>(path: string, fallback: T): Promise<T> => {
+  try {
+    const response = await fetch(getRawUrl(path), { cache: "no-cache" });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return (await response.json()) as T;
+  } catch (error) {
+    console.warn(`${path} indisponible sur GitHub, fallback local`, error);
+    return fallback;
+  }
+};
 
 export const getProfilePictureUrl = () => profilePicture;
