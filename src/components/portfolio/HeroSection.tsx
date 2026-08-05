@@ -80,7 +80,7 @@ const HeroSection = () => {
               </div>
               <div className="flex items-center gap-2">
                 <Briefcase className="w-5 h-5 text-primary" />
-                <span>iBanFirst & Tantar</span>
+                <span>Tantar</span>
               </div>
             </div>
             
