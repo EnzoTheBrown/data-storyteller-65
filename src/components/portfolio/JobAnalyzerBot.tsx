@@ -4,8 +4,9 @@ import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-
-const API_BASE = "https://lols8flga6.execute-api.eu-west-1.amazonaws.com/analyze-application-text";
+import { supabase } from "@/integrations/supabase/client";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { FunctionsHttpError } from "@supabase/supabase-js";
 
 interface AnalysisResult {
   fitting_score: number;
@@ -13,6 +14,7 @@ interface AnalysisResult {
 }
 
 export const JobAnalyzerBot = () => {
+  const { language } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [jobText, setJobText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -56,19 +58,33 @@ Check out his portfolio: https://enzolebrun.dev`;
     setError(null);
     
     try {
-      const response = await fetch(`${API_BASE}/analyze-application-text`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ job_description: jobText }),
-      });
-      
-      if (!response.ok) {
-        throw new Error("Failed to analyze text");
+      const { data, error: fnError } = await supabase.functions.invoke<AnalysisResult>(
+        "analyze-job-fit",
+        { body: { job_description: jobText, language } },
+      );
+
+      if (fnError) {
+        const details =
+          fnError instanceof FunctionsHttpError
+            ? await fnError.context.text()
+            : fnError.message;
+        console.error("analyze-job-fit failed:", details);
+        let message = "Failed to analyze. Please try again.";
+        try {
+          const parsed = JSON.parse(details);
+          if (parsed?.error) message = parsed.error;
+        } catch {
+          /* keep default message */
+        }
+        setError(message);
+        return;
       }
-      
-      const data: AnalysisResult = await response.json();
+
+      if (!data?.reasons?.length) {
+        setError("Failed to analyze. Please try again.");
+        return;
+      }
+
       setResult(data);
     } catch (err) {
       setError("Failed to analyze. Please try again.");
