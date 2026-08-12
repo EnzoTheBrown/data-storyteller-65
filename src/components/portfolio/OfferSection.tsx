@@ -35,7 +35,7 @@ const OfferSection = () => {
   ];
 
   return (
-    <section id="offer" className="py-16 md:py-24 bg-secondary/10 border-y border-border/40">
+    <section id="offer" className="py-12 md:py-16 bg-secondary/10 border-y border-border/40">
       <div className="container px-6 max-w-5xl mx-auto">
         <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground mb-10">
           {t({ en: "What I offer", fr: "Ce que je propose" })}

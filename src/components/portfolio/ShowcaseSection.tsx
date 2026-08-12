@@ -72,7 +72,7 @@ const ShowcaseSection = () => {
   const { t } = useLanguage();
 
   return (
-    <section id="showcase" className="py-16 md:py-24 bg-background">
+    <section id="showcase" className="py-12 md:py-16 bg-background">
       <div className="container px-6 max-w-5xl mx-auto">
         <div className="flex items-center gap-3 mb-10">
           <div className="p-2 rounded-lg bg-primary/10">
