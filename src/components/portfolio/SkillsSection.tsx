@@ -62,7 +62,7 @@ const SkillsSection = () => {
   ];
 
   return (
-    <section id="skills" className="py-16 md:py-24 bg-background">
+    <section id="skills" className="py-12 md:py-16 bg-background">
       <div className="container px-6 max-w-5xl mx-auto">
         <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground mb-10">
           {t({ en: "Skills", fr: "Compétences" })}

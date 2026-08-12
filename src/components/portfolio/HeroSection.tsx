@@ -9,7 +9,7 @@ const HeroSection = () => {
   const { t } = useLanguage();
 
   return (
-    <section className="relative min-h-[80vh] flex items-center justify-center gradient-hero overflow-hidden">
+    <section className="relative flex items-center justify-center gradient-hero overflow-hidden">
       {/* Language Switcher */}
       <div className="absolute top-6 right-6 z-20">
         <LanguageSwitcher />
@@ -21,11 +21,11 @@ const HeroSection = () => {
         <div className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-accent/10 blur-3xl" />
       </div>
 
-      <div className="container relative z-10 px-6 py-20">
-        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+      <div className="container relative z-10 px-6 py-16 lg:py-20">
+        <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-14">
           {/* Profile Image */}
           <div className="relative animate-fade-in" style={{ animationDelay: "0.1s" }}>
-            <div className="relative w-56 h-56 lg:w-72 lg:h-72 rounded-full overflow-hidden border-2 border-primary/30 glow-primary">
+            <div className="relative w-40 h-40 lg:w-52 lg:h-52 rounded-full overflow-hidden border-2 border-primary/30 glow-primary">
               <img
                 src={getProfilePictureUrl()}
                 alt="Profile"
@@ -35,87 +35,71 @@ const HeroSection = () => {
                 }}
               />
             </div>
-            <div className="absolute -bottom-2 -right-2 w-16 h-16 rounded-full bg-primary flex items-center justify-center animate-pulse-glow">
-              <Sparkles className="w-7 h-7 text-primary-foreground" />
+            <div className="absolute -bottom-1 -right-1 w-12 h-12 rounded-full bg-primary flex items-center justify-center animate-pulse-glow">
+              <Sparkles className="w-5 h-5 text-primary-foreground" />
             </div>
           </div>
 
           {/* Content */}
-          <div className="text-center lg:text-left max-w-2xl">
+          <div className="text-center lg:text-left max-w-xl">
             <p 
-              className="text-primary font-medium tracking-wider uppercase text-sm mb-4 animate-fade-in"
+              className="text-primary font-medium tracking-wider uppercase text-xs mb-3 animate-fade-in"
               style={{ animationDelay: "0.2s" }}
             >
               {t({ en: "LLM Infrastructure · Kubernetes · Sovereign AI", fr: "Infrastructure LLM · Kubernetes · IA souveraine" })}
             </p>
             <h1 
-              className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-2 animate-fade-in"
+              className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-3 animate-fade-in"
               style={{ animationDelay: "0.3s" }}
             >
               Enzo Lebrun — <span className="text-gradient">{t({ en: "LLM Infrastructure Engineer", fr: "Ingénieur Infrastructure LLM" })}</span>
             </h1>
             <p 
-              className="font-display text-2xl md:text-3xl lg:text-4xl font-semibold text-foreground/80 mb-6 animate-fade-in"
+              className="text-base md:text-lg text-muted-foreground leading-relaxed mb-5 animate-fade-in"
               style={{ animationDelay: "0.35s" }}
             >
               {t({
-                en: "Hosting and operating LLMs in production, on Kubernetes, at scale and in sovereign environments.",
-                fr: "Hébergement et exploitation de LLM en production, sur Kubernetes, à l'échelle et en environnement souverain."
-              })}
-            </p>
-            <p 
-              className="text-muted-foreground text-lg md:text-xl leading-relaxed mb-8 animate-fade-in"
-              style={{ animationDelay: "0.4s" }}
-            >
-              {t({
-                en: "After several years in Data Science and NLP, then as Lead Backend & GenAI on high-reliability AI platforms, I now focus on LLM inference infrastructure: multi-model serving, GPU scheduling, and observability and resilience of production inference pipelines.",
-                fr: "Après plusieurs années en Data Science et NLP, puis en tant que Lead Backend & GenAI sur des plateformes IA à fort enjeu de fiabilité, je me concentre aujourd'hui sur l'infrastructure d'inférence LLM : serving multi-modèles, scheduling GPU, observabilité et résilience des pipelines d'inférence en production."
+                en: "Hosting and operating LLMs in production, on Kubernetes, at scale and in sovereign environments — multi-model serving, GPU scheduling, observability.",
+                fr: "Hébergement et exploitation de LLM en production, sur Kubernetes, à l'échelle et en environnement souverain — serving multi-modèles, scheduling GPU, observabilité."
               })}
             </p>
             
             <div 
-              className="flex flex-wrap justify-center lg:justify-start gap-6 text-muted-foreground mb-6 animate-fade-in"
+              className="flex flex-wrap justify-center lg:justify-start gap-5 text-sm text-muted-foreground mb-5 animate-fade-in"
               style={{ animationDelay: "0.5s" }}
             >
               <div className="flex items-center gap-2">
-                <MapPin className="w-5 h-5 text-primary" />
+                <MapPin className="w-4 h-4 text-primary" />
                 <span>France</span>
               </div>
               <div className="flex items-center gap-2">
-                <Briefcase className="w-5 h-5 text-primary" />
+                <Briefcase className="w-4 h-4 text-primary" />
                 <span>Tantar</span>
               </div>
             </div>
             
             <blockquote 
-              className="text-muted-foreground/70 italic text-sm md:text-base border-l-2 border-primary/30 pl-4 mb-6 animate-fade-in"
+              className="text-muted-foreground/70 italic text-sm border-l-2 border-primary/30 pl-4 mb-6 animate-fade-in"
               style={{ animationDelay: "0.6s" }}
             >
               "Build systems you want to debug at 3am." – Charity Majors
             </blockquote>
 
-            <div className="flex flex-wrap gap-4 justify-center lg:justify-start animate-fade-in" style={{ animationDelay: "0.7s" }}>
-              <Button asChild size="lg">
+            <div className="flex flex-wrap gap-3 justify-center lg:justify-start animate-fade-in" style={{ animationDelay: "0.7s" }}>
+              <Button asChild>
                 <Link to="/schedule">
-                  <Calendar className="w-5 h-5 mr-2" />
+                  <Calendar className="w-4 h-4 mr-2" />
                   {t({ en: "Schedule a Meeting", fr: "Prendre rendez-vous" })}
                 </Link>
               </Button>
-              <Button asChild size="lg" variant="outline">
+              <Button asChild variant="outline">
                 <Link to="/projects">
-                  <Layers className="w-5 h-5 mr-2" />
+                  <Layers className="w-4 h-4 mr-2" />
                   {t({ en: "View Projects", fr: "Voir les projets" })}
                 </Link>
               </Button>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-        <div className="w-6 h-10 border-2 border-muted-foreground/30 rounded-full flex justify-center pt-2">
-          <div className="w-1 h-2 bg-primary rounded-full" />
         </div>
       </div>
     </section>

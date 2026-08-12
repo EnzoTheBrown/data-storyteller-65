@@ -9,7 +9,7 @@ const ExperienceSection = () => {
 
   if (isLoading) {
     return (
-      <section className="py-20 px-6">
+      <section className="py-14 px-6">
         <div className="container max-w-4xl">
           <div className="flex items-center justify-center py-20">
             <Loader2 className="w-8 h-8 text-primary animate-spin" />
@@ -21,7 +21,7 @@ const ExperienceSection = () => {
 
   if (error) {
     return (
-      <section className="py-20 px-6">
+      <section className="py-14 px-6">
         <div className="container max-w-4xl text-center text-muted-foreground">
           {t({ en: "Unable to load experiences.", fr: "Impossible de charger les expériences." })}
         </div>
@@ -35,9 +35,9 @@ const ExperienceSection = () => {
   );
 
   return (
-    <section id="experience" className="py-20 px-6">
+    <section id="experience" className="py-14 px-6">
       <div className="container max-w-4xl">
-        <div className="flex items-center gap-3 mb-12 animate-fade-in">
+        <div className="flex items-center gap-3 mb-8 animate-fade-in">
           <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
             <Briefcase className="w-6 h-6 text-primary" />
           </div>
