@@ -46,27 +46,30 @@ const HeroSection = () => {
               className="text-primary font-medium tracking-wider uppercase text-sm mb-4 animate-fade-in"
               style={{ animationDelay: "0.2s" }}
             >
-              Lead Backend & GenAI
+              {t({ en: "LLM Infrastructure · Kubernetes · Sovereign AI", fr: "Infrastructure LLM · Kubernetes · IA souveraine" })}
             </p>
             <h1 
               className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-2 animate-fade-in"
               style={{ animationDelay: "0.3s" }}
             >
-              Enzo Lebrun
+              Enzo Lebrun — <span className="text-gradient">{t({ en: "LLM Infrastructure Engineer", fr: "Ingénieur Infrastructure LLM" })}</span>
             </h1>
             <p 
               className="font-display text-2xl md:text-3xl lg:text-4xl font-semibold text-foreground/80 mb-6 animate-fade-in"
               style={{ animationDelay: "0.35s" }}
             >
-              Data Scientist & <span className="text-gradient">AI Engineer</span>
+              {t({
+                en: "Hosting and operating LLMs in production, on Kubernetes, at scale and in sovereign environments.",
+                fr: "Hébergement et exploitation de LLM en production, sur Kubernetes, à l'échelle et en environnement souverain."
+              })}
             </p>
             <p 
               className="text-muted-foreground text-lg md:text-xl leading-relaxed mb-8 animate-fade-in"
               style={{ animationDelay: "0.4s" }}
             >
               {t({
-                en: "Specialized in NLP, MLOps and distributed systems. From designing Machine Learning models to production deployment, I transform ideas into reliable and scalable AI solutions.",
-                fr: "Spécialisé en NLP, MLOps et systèmes distribués. De la conception de modèles de Machine Learning à leur mise en production, je transforme les idées en solutions IA fiables et scalables."
+                en: "After several years in Data Science and NLP, then as Lead Backend & GenAI on high-reliability AI platforms, I now focus on LLM inference infrastructure: multi-model serving, GPU scheduling, and observability and resilience of production inference pipelines.",
+                fr: "Après plusieurs années en Data Science et NLP, puis en tant que Lead Backend & GenAI sur des plateformes IA à fort enjeu de fiabilité, je me concentre aujourd'hui sur l'infrastructure d'inférence LLM : serving multi-modèles, scheduling GPU, observabilité et résilience des pipelines d'inférence en production."
               })}
             </p>
             

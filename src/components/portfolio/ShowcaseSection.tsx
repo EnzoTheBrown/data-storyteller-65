@@ -21,11 +21,20 @@ const detectLanguage = (title: string): "en" | "fr" => {
   return frenchIndicators.test(title) ? "fr" : "en";
 };
 
+// Positioning pages (FR / EN) — their content drives the hero/skills/offer sections,
+// so they are not listed as case studies.
+const POSITIONING_FILES = [
+  "showcases/15a69331e4504d178d2ca5b1c2a2ca0d.md",
+  "showcases/e2644ba634ba4c9d8fc2e10c969adfd5.md",
+];
+
 const useShowcaseList = () => {
   const { language } = useLanguage();
   const { data: index, isLoading, error } = useContentIndex();
 
+  // Keep the manifest order as-is (no date/alphabetical sorting).
   const projects: ShowcaseProject[] = (index?.showcases || [])
+    .filter((item: ContentItem) => !POSITIONING_FILES.includes(item.name))
     .filter((item: ContentItem) => detectLanguage(item.title) === language)
     .map((item: ContentItem) => ({
       name: item.name,
