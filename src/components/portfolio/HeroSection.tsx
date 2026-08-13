@@ -46,21 +46,21 @@ const HeroSection = () => {
               className="text-primary font-medium tracking-wider uppercase text-xs mb-3 animate-fade-in"
               style={{ animationDelay: "0.2s" }}
             >
-              {t({ en: "LLM Infrastructure · Kubernetes · Sovereign AI", fr: "Infrastructure LLM · Kubernetes · IA souveraine" })}
+              {t({ en: "LLM Engineer · On-Premise & Sovereign", fr: "Ingénieur LLM · On-premise & souverain" })}
             </p>
             <h1 
               className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-3 animate-fade-in"
               style={{ animationDelay: "0.3s" }}
             >
-              Enzo Lebrun — <span className="text-gradient">{t({ en: "LLM Infrastructure Engineer", fr: "Ingénieur Infrastructure LLM" })}</span>
+              Enzo Lebrun — <span className="text-gradient">{t({ en: "On-Premise LLM Engineer", fr: "Ingénieur LLM on-premise" })}</span>
             </h1>
             <p 
               className="text-base md:text-lg text-muted-foreground leading-relaxed mb-5 animate-fade-in"
               style={{ animationDelay: "0.35s" }}
             >
               {t({
-                en: "Hosting and operating LLMs in production, on Kubernetes, at scale and in sovereign environments — multi-model serving, GPU scheduling, observability.",
-                fr: "Hébergement et exploitation de LLM en production, sur Kubernetes, à l'échelle et en environnement souverain — serving multi-modèles, scheduling GPU, observabilité."
+                en: "I deploy and operate large language models in production, on controlled, sovereign infrastructure. I work end to end, from go-live to day-to-day operations, keeping performance, reliability and cost under control.",
+                fr: "Je déploie et j'opère des grands modèles de langage en production, sur des infrastructures maîtrisées et souveraines. J'interviens de la mise en service jusqu'à l'exploitation : performance, fiabilité et coût sous contrôle."
               })}
             </p>
             
@@ -78,24 +78,17 @@ const HeroSection = () => {
               </div>
             </div>
             
-            <blockquote 
-              className="text-muted-foreground/70 italic text-sm border-l-2 border-primary/30 pl-4 mb-6 animate-fade-in"
-              style={{ animationDelay: "0.6s" }}
-            >
-              "Build systems you want to debug at 3am." – Charity Majors
-            </blockquote>
-
-            <div className="flex flex-wrap gap-3 justify-center lg:justify-start animate-fade-in" style={{ animationDelay: "0.7s" }}>
+            <div className="flex flex-wrap gap-3 justify-center lg:justify-start animate-fade-in" style={{ animationDelay: "0.6s" }}>
               <Button asChild>
                 <Link to="/schedule">
                   <Calendar className="w-4 h-4 mr-2" />
-                  {t({ en: "Schedule a Meeting", fr: "Prendre rendez-vous" })}
+                  {t({ en: "Book a meeting", fr: "Prendre rendez-vous" })}
                 </Link>
               </Button>
               <Button asChild variant="outline">
                 <Link to="/projects">
                   <Layers className="w-4 h-4 mr-2" />
-                  {t({ en: "View Projects", fr: "Voir les projets" })}
+                  {t({ en: "View projects", fr: "Voir les projets" })}
                 </Link>
               </Button>
             </div>
