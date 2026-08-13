@@ -21,11 +21,11 @@ const HeroSection = () => {
         <div className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-accent/10 blur-3xl" />
       </div>
 
-      <div className="container relative z-10 px-6 py-16 lg:py-20">
-        <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-14">
+      <div className="container relative z-10 px-6 py-12 lg:py-16">
+        <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
           {/* Profile Image */}
-          <div className="relative animate-fade-in" style={{ animationDelay: "0.1s" }}>
-            <div className="relative w-40 h-40 lg:w-52 lg:h-52 rounded-full overflow-hidden border-2 border-primary/30 glow-primary">
+          <div className="relative shrink-0 animate-fade-in" style={{ animationDelay: "0.1s" }}>
+            <div className="relative w-32 h-32 md:w-40 md:h-40 lg:w-44 lg:h-44 rounded-full overflow-hidden border-2 border-primary/30 glow-primary">
               <img
                 src={getProfilePictureUrl()}
                 alt="Profile"
@@ -35,8 +35,8 @@ const HeroSection = () => {
                 }}
               />
             </div>
-            <div className="absolute -bottom-1 -right-1 w-12 h-12 rounded-full bg-primary flex items-center justify-center animate-pulse-glow">
-              <Sparkles className="w-5 h-5 text-primary-foreground" />
+            <div className="absolute -bottom-1 -right-1 w-10 h-10 rounded-full bg-primary flex items-center justify-center animate-pulse-glow">
+              <Sparkles className="w-4 h-4 text-primary-foreground" />
             </div>
           </div>
 
@@ -49,13 +49,14 @@ const HeroSection = () => {
               {t({ en: "LLM Engineer · On-Premise & Sovereign", fr: "Ingénieur LLM · On-premise & souverain" })}
             </p>
             <h1 
-              className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-3 animate-fade-in"
+              className="font-display text-3xl md:text-4xl lg:text-[2.5rem] font-bold text-foreground mb-3 animate-fade-in text-balance"
               style={{ animationDelay: "0.3s" }}
             >
-              Enzo Lebrun — <span className="text-gradient">{t({ en: "On-Premise LLM Engineer", fr: "Ingénieur LLM on-premise" })}</span>
+              Enzo Lebrun<br className="hidden md:block" />
+              <span className="text-gradient">{t({ en: "On-Premise LLM Engineer", fr: "Ingénieur LLM on-premise" })}</span>
             </h1>
             <p 
-              className="text-base md:text-lg text-muted-foreground leading-relaxed mb-5 animate-fade-in"
+              className="text-base md:text-base text-muted-foreground leading-relaxed mb-5 animate-fade-in text-balance"
               style={{ animationDelay: "0.35s" }}
             >
               {t({
