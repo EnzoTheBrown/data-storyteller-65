@@ -7,7 +7,7 @@ const SkillsSection = () => {
   const blocks = [
     {
       icon: Server,
-      title: t({ en: "LLM Serving", fr: "Serving LLM" }),
+      title: t({ en: "LLM serving (self-hosted)", fr: "Serving LLM auto-hébergé" }),
       items: [
         t({
           en: "Open-source inference engines (vLLM) and multi-model gateways (LiteLLM)",
@@ -25,15 +25,15 @@ const SkillsSection = () => {
     },
     {
       icon: Boxes,
-      title: t({ en: "Kubernetes & GPU Infrastructure", fr: "Infrastructure Kubernetes & GPU" }),
+      title: t({ en: "On-premise Kubernetes & GPU", fr: "Kubernetes & GPU on-premise" }),
       items: [
         t({
           en: "GPU scheduling and partitioning (NVIDIA MIG)",
           fr: "Scheduling et partitionnement GPU (NVIDIA MIG)",
         }),
         t({
-          en: "GitOps (ArgoCD, Helm), air-gapped / sovereign deployment",
-          fr: "GitOps (ArgoCD, Helm), déploiement en environnement air-gapped / souverain",
+          en: "GitOps (ArgoCD, Helm) on air-gapped / sovereign clusters",
+          fr: "GitOps (ArgoCD, Helm) sur clusters air-gapped / souverains",
         }),
         t({
           en: "Secrets management (SealedSecrets), delivery chain security",
@@ -43,7 +43,7 @@ const SkillsSection = () => {
     },
     {
       icon: Activity,
-      title: t({ en: "Observability & Reliability", fr: "Observabilité & fiabilité" }),
+      title: t({ en: "Observability & reliability", fr: "Observabilité & fiabilité" }),
       items: [
         t({
           en: "Distributed tracing (OpenTelemetry, W3C TraceContext)",
