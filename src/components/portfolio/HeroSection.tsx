@@ -22,7 +22,7 @@ const HeroSection = () => {
       </div>
 
       <div className="container relative z-10 px-6 py-12 lg:py-16">
-        <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
+        <div className="flex flex-col items-center gap-6">
           {/* Profile Image */}
           <div className="relative shrink-0 animate-fade-in" style={{ animationDelay: "0.1s" }}>
             <div className="relative w-32 h-32 md:w-40 md:h-40 lg:w-44 lg:h-44 rounded-full overflow-hidden border-2 border-primary/30 glow-primary">
@@ -41,7 +41,7 @@ const HeroSection = () => {
           </div>
 
           {/* Content */}
-          <div className="text-center lg:text-left max-w-xl">
+          <div className="w-full max-w-3xl text-center">
             <p 
               className="text-primary font-medium tracking-wider uppercase text-xs mb-3 animate-fade-in"
               style={{ animationDelay: "0.2s" }}
@@ -49,14 +49,14 @@ const HeroSection = () => {
               {t({ en: "LLM Engineer · On-Premise & Sovereign", fr: "Ingénieur LLM · On-premise & souverain" })}
             </p>
             <h1 
-              className="font-display text-3xl md:text-4xl lg:text-[2.5rem] font-bold text-foreground mb-3 animate-fade-in text-balance"
+              className="mx-auto font-display text-3xl md:text-4xl lg:text-[2.5rem] font-bold text-foreground mb-3 animate-fade-in text-balance"
               style={{ animationDelay: "0.3s" }}
             >
               Enzo Lebrun<br className="hidden md:block" />
               <span className="text-gradient">{t({ en: "On-Premise LLM Engineer", fr: "Ingénieur LLM on-premise" })}</span>
             </h1>
             <p 
-              className="text-base md:text-base text-muted-foreground leading-relaxed mb-5 animate-fade-in text-balance"
+              className="mx-auto max-w-2xl text-base text-muted-foreground leading-relaxed mb-5 animate-fade-in text-balance"
               style={{ animationDelay: "0.35s" }}
             >
               {t({
@@ -66,7 +66,7 @@ const HeroSection = () => {
             </p>
             
             <div 
-              className="flex flex-wrap justify-center lg:justify-start gap-5 text-sm text-muted-foreground mb-5 animate-fade-in"
+              className="flex flex-wrap justify-center gap-5 text-sm text-muted-foreground mb-5 animate-fade-in"
               style={{ animationDelay: "0.5s" }}
             >
               <div className="flex items-center gap-2">
@@ -79,7 +79,7 @@ const HeroSection = () => {
               </div>
             </div>
             
-            <div className="flex flex-wrap gap-3 justify-center lg:justify-start animate-fade-in" style={{ animationDelay: "0.6s" }}>
+            <div className="flex flex-wrap gap-3 justify-center animate-fade-in" style={{ animationDelay: "0.6s" }}>
               <Button asChild>
                 <Link to="/schedule">
                   <Calendar className="w-4 h-4 mr-2" />
